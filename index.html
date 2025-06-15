@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>NY VICHEKA | Free Background Images Gallery</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: linear-gradient(120deg, #e0e7ff 0%, #f0fdfa 100%);
+      color: #222;
+      transition: background-image 0.5s;
+    }
+    header {
+      background: linear-gradient(90deg, #6366f1 0%, #06b6d4 100%);
+      color: white;
+      padding: 2rem 1rem 1rem 1rem;
+      text-align: center;
+      border-radius: 0 0 24px 24px;
+      box-shadow: 0 2px 12px rgba(99,102,241,.07);
+    }
+    header h1 {
+      margin: 0;
+      font-size: 2.5rem;
+      font-weight: 700;
+      letter-spacing: .04em;
+    }
+    header .subtitle {
+      font-size: 1.2rem;
+      font-weight: 600;
+      letter-spacing: .04em;
+      margin-bottom: 0.1em;
+      color: #f1f5f9;
+      opacity: .96;
+    }
+    header p {
+      margin: 0.7rem 0 0 0;
+      font-size: 1.15rem;
+      opacity: .95;
+    }
+    .gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fit,minmax(260px,1fr));
+      gap: 2rem;
+      padding: 2rem 2vw;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .card {
+      background: white;
+      border-radius: 1.1rem;
+      box-shadow: 0 3px 12px rgba(0,0,0,0.07);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      transition: transform 0.18s, box-shadow 0.18s;
+    }
+    .card:hover {
+      transform: translateY(-6px) scale(1.022);
+      box-shadow: 0 8px 28px rgba(99,102,241,.15);
+    }
+    .card img {
+      width: 100%;
+      height: 170px;
+      object-fit: cover;
+      background: #f3f4f6;
+      display: block;
+    }
+    .card-details {
+      padding: 1rem 1.2rem 1.2rem 1.2rem;
+      flex: 1 1 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 0.7rem;
+    }
+    .img-link-row {
+      display: flex;
+      gap: 0.3rem;
+      align-items: center;
+      background: #f8fafc;
+      border-radius: 0.5rem;
+      padding: 0.5rem;
+      margin-bottom: 0.3rem;
+      font-size: .97rem;
+      position: relative;
+    }
+    .img-link-row input {
+      flex: 1 1 auto;
+      border: none;
+      background: transparent;
+      font-size: inherit;
+      color: #374151;
+      outline: none;
+      padding: 0;
+      margin: 0;
+      user-select: all;
+    }
+    .img-link-row button {
+      padding: 0.25rem 0.7rem;
+      background: #6366f1;
+      color: white;
+      border: none;
+      border-radius: 0.35rem;
+      cursor: pointer;
+      font-size: 1rem;
+      transition: background .15s;
+    }
+    .img-link-row button:hover { background: #4f46e5; }
+
+    .copy-message {
+      position: absolute;
+      right: 0;
+      top: 100%;
+      background: #16a34a;
+      color: white;
+      padding: 0.25em 0.8em;
+      font-size: .98rem;
+      border-radius: 0.4em;
+      margin-top: 0.25em;
+      opacity: 1;
+      transition: opacity 0.3s;
+      pointer-events: none;
+      z-index: 1;
+      white-space: nowrap;
+    }
+    .copy-message.hide {
+      opacity: 0;
+    }
+    .bg-preview {
+      border-radius: 0.6rem;
+      margin-top: 0.7rem;
+      height: 44px;
+      background-size: cover;
+      background-position: center;
+      border: 1.5px solid #e5e7eb;
+      font-size: .93rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #222;
+      opacity: .9;
+      cursor: pointer;
+      position: relative;
+      transition: box-shadow 0.18s;
+    }
+    .bg-preview:hover {
+      box-shadow: 0 0 0 2px #6366f1;
+    }
+    .code-row {
+      background: #f1f5f9;
+      padding: 6px 8px;
+      border-radius: 0.4rem;
+      margin-bottom: 0.3rem;
+      font-family: monospace;
+      color: #475569;
+      font-size: .98rem;
+      display: flex;
+      align-items: center;
+      gap: 0.4em;
+      overflow-x: auto;
+      position: relative;
+    }
+    .code-row .copy-btn {
+      margin-left: 12px;
+      background: #e0e7ff;
+      color: #6366f1;
+      border: none;
+      border-radius: 0.25rem;
+      padding: 2px 10px;
+      cursor: pointer;
+      font-size: .93em;
+      transition: background 0.12s;
+    }
+    .code-row .copy-btn:hover {
+      background: #6366f1;
+      color: white;
+    }
+    .code-row .copy-message {
+      left: 50%;
+      right: auto;
+      top: 100%;
+      margin-top: 2px;
+      transform: translateX(-50%);
+    }
+    @media (max-width: 600px) {
+      .gallery { gap: 1.2rem; padding: 1rem 0.5rem; }
+      .card-details { padding: 0.6rem 0.7rem 0.8rem 0.7rem; }
+      header h1 { font-size: 2rem; }
+      header .subtitle { font-size: 1rem; }
+      .copy-message { right: 50%; left: 50%; transform: translateX(-50%); }
+    }
+    footer {
+      text-align: center;
+      color: #94a3b8;
+      font-size: 1rem;
+      padding: 2rem 0 1.3rem 0;
+      background: none;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="subtitle">NY VICHEKA</div>
+    <h1>Free Background Image Gallery</h1>
+    <p>
+      Copy the URL of any image and use it as your website background with CSS.<br>
+      <small>
+        Click "Copy Link" to copy the direct link.<br>
+        <b>Or use "Copy CSS" to get the full CSS code for your HTML or stylesheet – works anywhere, even on GitHub Pages!</b><br>
+        <b>You can also click "Preview background" to try it live!</b>
+      </small>
+    </p>
+  </header>
+  <main>
+    <div class="gallery" id="gallery"></div>
+  </main>
+  <footer>
+    &copy; 2025 NY VICHEKA | Free Background Gallery. Use and share freely!
+  </footer>
+  <script>
+    // Use your actual GitHub Pages URL as the base, no trailing slash.
+    const baseRepoURL = "https://vicheka2.github.io/freeimage";
+
+    const images = [
+      {
+        url: baseRepoURL + "/images/img1.png",
+        desc: "KaSim Shop Background"
+      },
+      {
+        url: baseRepoURL + "/images/img2.png",
+        desc: "Custom Image 2 (img2.png)"
+      },
+      {
+        url: baseRepoURL + "/images/img3.png",
+        desc: "Custom Image 3 (img3.png)"
+      },
+      {
+        url: baseRepoURL + "/images/img4.png",
+        desc: "Custom Image 4 (img4.png)"
+      }
+    ];
+
+    const gallery = document.getElementById('gallery');
+
+    function createCard(img, idx) {
+      const card = document.createElement('div');
+      card.className = 'card';
+
+      const image = document.createElement('img');
+      image.src = img.url;
+      image.alt = img.desc || `Background ${idx+1}`;
+
+      // Copy row
+      const linkRow = document.createElement('div');
+      linkRow.className = 'img-link-row';
+
+      const input = document.createElement('input');
+      input.type = 'text';
+      input.value = img.url;
+      input.readOnly = true;
+      input.onclick = function() { this.select(); };
+
+      const btn = document.createElement('button');
+      btn.textContent = "Copy Link";
+      btn.onclick = () => {
+        copyText(img.url, btn, input, linkRow);
+      };
+
+      linkRow.appendChild(input);
+      linkRow.appendChild(btn);
+
+      // CSS code row with copy
+      const cssUrl = `background-image: url('${img.url}');`;
+      const cssRow = document.createElement('div');
+      cssRow.className = "code-row";
+      cssRow.innerHTML = `<span>${cssUrl}</span>`;
+      const cssBtn = document.createElement('button');
+      cssBtn.className = "copy-btn";
+      cssBtn.textContent = "Copy CSS";
+      cssBtn.onclick = () => {
+        copyCSSText(cssUrl, cssBtn, cssRow);
+      };
+      cssRow.appendChild(cssBtn);
+
+      // Preview background CSS usage
+      const bgPrev = document.createElement('div');
+      bgPrev.className = 'bg-preview';
+      bgPrev.style.backgroundImage = `url('${img.url}')`;
+      bgPrev.innerText = "Preview background";
+      bgPrev.title = "Click to set this as the page background";
+      bgPrev.onclick = function() {
+        document.body.style.backgroundImage = `url('${img.url}')`;
+        document.body.style.backgroundSize = "cover";
+        document.body.style.backgroundPosition = "center";
+        document.body.style.backgroundRepeat = "no-repeat";
+        showBgSetMessage(bgPrev);
+      };
+
+      // Description
+      const details = document.createElement('div');
+      details.className = 'card-details';
+      const desc = document.createElement('div');
+      desc.innerText = img.desc || "";
+
+      details.appendChild(linkRow);
+      details.appendChild(cssRow);
+      details.appendChild(bgPrev);
+      details.appendChild(desc);
+
+      card.appendChild(image);
+      card.appendChild(details);
+      return card;
+    }
+
+    function copyText(text, btn, inputElem, linkRow) {
+      if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(text).then(() => {
+          showCopyMessage(linkRow);
+        }, () => {
+          fallbackCopy(text, btn, inputElem, linkRow);
+        });
+      } else {
+        fallbackCopy(text, btn, inputElem, linkRow);
+      }
+    }
+
+    function fallbackCopy(text, btn, inputElem, linkRow) {
+      inputElem.select();
+      try {
+        const successful = document.execCommand('copy');
+        if (successful) {
+          showCopyMessage(linkRow);
+        } else {
+          alert("Copy failed. Please copy manually.");
+        }
+      } catch (err) {
+        alert("Copy failed. Please copy manually.");
+      }
+    }
+
+    function copyCSSText(css, btn, row) {
+      if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(css).then(() => {
+          showCSSCopyMessage(row);
+        }, () => {
+          fallbackCopyCSS(css, btn, row);
+        });
+      } else {
+        fallbackCopyCSS(css, btn, row);
+      }
+    }
+
+    function fallbackCopyCSS(css, btn, row) {
+      // fallback: create a temp textarea
+      const textarea = document.createElement("textarea");
+      textarea.value = css;
+      document.body.appendChild(textarea);
+      textarea.select();
+      try {
+        document.execCommand('copy');
+        showCSSCopyMessage(row);
+      } catch (err) {
+        alert("Copy failed. Please copy manually.");
+      }
+      document.body.removeChild(textarea);
+    }
+
+    function showCopyMessage(linkRow) {
+      let msg = linkRow.querySelector('.copy-message');
+      if (!msg) {
+        msg = document.createElement('div');
+        msg.className = 'copy-message';
+        msg.innerText = 'Copied!';
+        linkRow.appendChild(msg);
+      }
+      msg.classList.remove('hide');
+      setTimeout(() => {
+        msg.classList.add('hide');
+      }, 1400);
+    }
+
+    function showCSSCopyMessage(row) {
+      let msg = row.querySelector('.copy-message');
+      if (!msg) {
+        msg = document.createElement('div');
+        msg.className = 'copy-message';
+        msg.innerText = 'Copied!';
+        row.appendChild(msg);
+      }
+      msg.classList.remove('hide');
+      setTimeout(() => {
+        msg.classList.add('hide');
+      }, 1400);
+    }
+
+    function showBgSetMessage(bgPrev) {
+      let msg = bgPrev.querySelector('.bgset-message');
+      if (!msg) {
+        msg = document.createElement('div');
+        msg.className = 'copy-message bgset-message';
+        msg.innerText = 'Background applied!';
+        bgPrev.appendChild(msg);
+      }
+      msg.classList.remove('hide');
+      setTimeout(() => {
+        msg.classList.add('hide');
+      }, 1400);
+    }
+
+    images.forEach((img, idx) => {
+      gallery.appendChild(createCard(img, idx));
+    });
+  </script>
+</body>
+</html>
