@@ -769,7 +769,8 @@
     const images = [];
     for (let i = 1; i <= IMAGES_TOTAL; i++) {
       images.push({
-        url: `${baseRepoURL}/images/img${i}.png`,
+        url: `${baseRepoURL}/images/img${i}.png`, // Try .png first
+        fallbackUrl: `${baseRepoURL}/images/img${i}.jpg`, // Fallback to .jpg if .png fails
         filename: `img${i}.png`,
         idx: i
       });
@@ -928,20 +929,28 @@
       card.className = 'card';
 
       const image = document.createElement('img');
-      image.src = img.url;
+      image.src = img.url; // Start with .png
       image.alt = `Image ${img.idx}`;
       let imageLoaded = false;
 
       image.onerror = function() {
         if (!imageLoaded) {
-          card.innerHTML = '';
-          const comingSoonDiv = document.createElement('div');
-          comingSoonDiv.className = 'coming-soon';
-          comingSoonDiv.innerText = "Coming Soon";
-          card.appendChild(comingSoonDiv);
-          const details = document.createElement('div');
-          details.className = 'card-details';
-          card.appendChild(details);
+          image.src = img.fallbackUrl; // Try .jpg if .png fails
+          image.onerror = function() {
+            card.innerHTML = '';
+            const comingSoonDiv = document.createElement('div');
+            comingSoonDiv.className = 'coming-soon';
+            comingSoonDiv.innerText = "Coming Soon";
+            card.appendChild(comingSoonDiv);
+            const details = document.createElement('div');
+            details.className = 'card-details';
+            card.appendChild(details);
+          };
+          image.onload = function() {
+            imageLoaded = true;
+            img.url = img.fallbackUrl; // Update URL to .jpg for consistency in links
+            img.filename = `img${img.idx}.jpg`;
+          };
         }
       };
       image.onload = function() {
