@@ -79,7 +79,7 @@
       margin-bottom: 2.3rem;
       position: sticky;
       top: 0;
-      z-index: 1000; /* Increased to ensure header is above all content */
+      z-index: 1000;
       transition: padding 0.3s ease-in-out, border-radius 0.3s ease-in-out, background 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
       width: 100%;
       box-sizing: border-box;
@@ -266,7 +266,7 @@
       font-size: 0.95rem;
       cursor: pointer;
       transition: background 0.2s, border-color 0.2s, top 0.3s ease-in-out, right 0.3s ease-in-out;
-      z-index: 1001; /* Above header */
+      z-index: 1001;
       width: 32px;
       height: 32px;
       display: flex;
@@ -312,7 +312,7 @@
       font-size: 0.95rem;
       cursor: pointer;
       transition: background 0.2s, border-color 0.2s, top 0.3s ease-in-out, right 0.3s ease-in-out;
-      z-index: 1001; /* Above header */
+      z-index: 1001;
       width: 32px;
       height: 32px;
       display: none;
@@ -359,7 +359,7 @@
       font-size: 0.95rem;
       cursor: pointer;
       transition: background 0.2s, border-color 0.2s, top 0.3s ease-in-out, left 0.3s ease-in-out;
-      z-index: 1001; /* Above header */
+      z-index: 1001;
       width: 32px;
       height: 32px;
       display: none;
@@ -403,7 +403,7 @@
       width: 100%;
       height: 100%;
       background: rgba(0, 0, 0, 0.5);
-      z-index: 900; /* Below header */
+      z-index: 900;
       transition: opacity 0.3s ease-in-out;
     }
     .dark-overlay.active {
@@ -413,7 +413,7 @@
       flex: 1 1 auto;
       width: 100%;
       position: relative;
-      z-index: 100; /* Below header */
+      z-index: 100;
     }
     .gallery {
       display: grid;
@@ -423,7 +423,7 @@
       max-width: 1240px;
       margin: 0 auto;
       position: relative;
-      z-index: 100; /* Below header */
+      z-index: 100;
     }
     .card {
       background: var(--card-bg);
@@ -440,7 +440,7 @@
       filter: blur(4px);
       transition: opacity 0.8s ease-out, transform 0.8s ease-out, filter 0.8s ease-out, box-shadow 0.8s ease-out;
       position: relative;
-      z-index: 100; /* Below header */
+      z-index: 100;
     }
     body.dark-mode .card {
       background: var(--card-bg-dark);
@@ -460,7 +460,7 @@
       transform: translateY(-8px) scale(1.027);
       box-shadow: 0 8px 36px rgba(99,102,241,0.17);
       border-color: var(--primary);
-      z-index: 110; /* Slightly above other cards, but below header */
+      z-index: 110;
     }
     body.dark-mode .card:hover {
       box-shadow: 0 8px 36px rgba(99,102,241,0.3);
@@ -468,7 +468,7 @@
     }
     .card.preview-active {
       animation: pulse 1.5s ease-in-out infinite;
-      z-index: 120; /* Above other cards, but below header */
+      z-index: 120;
     }
     @keyframes pulse {
       0% { transform: scale(1) rotate(0deg); box-shadow: 0 8px 36px rgba(99,102,241,0.17), 0 0 20px rgba(99,102,241,0.1); }
@@ -600,7 +600,7 @@
       font-size: 1.08em;
       border-radius: 1em;
       box-shadow: 0 4px 32px #22c55e44;
-      z-index: 9999; /* Above everything, including header */
+      z-index: 9999;
       opacity: 0.96;
       font-weight: 600;
       transition: opacity 0.25s;
@@ -617,7 +617,6 @@
     }
     .bg-preview {
       border-radius: 0.7rem;
-      margin-top: 0.6rem;
       height: 40px;
       background-size: cover;
       background-position: center;
@@ -676,19 +675,24 @@
       user-select: none;
       flex-wrap: wrap;
       position: relative;
-      z-index: 100; /* Below header */
+      z-index: 100;
     }
     .pagination button {
       background: #6366f1;
       color: white;
       border: none;
       border-radius: 0.5rem;
-      padding: 0.55rem 1.5rem;
+      padding: 0.55rem;
       font-size: 1.07rem;
       font-weight: 500;
       cursor: pointer;
       transition: background 0.16s;
       box-shadow: 0 2px 8px #6366f122;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 40px;
+      height: 40px;
     }
     body.dark-mode .pagination button {
       background: #4b5cfa;
@@ -714,6 +718,11 @@
       font-weight: 600;
       transition: background .13s, color .13s;
       cursor: pointer;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
     body.dark-mode .pagination .page-btn {
       background: #4b5563;
@@ -739,7 +748,7 @@
       letter-spacing: .04em;
       opacity: .97;
       position: relative;
-      z-index: 100; /* Below header */
+      z-index: 100;
     }
     body.dark-mode footer {
       color: #94a3b8;
@@ -1044,7 +1053,6 @@
       document.body.classList.add('dark-mode');
     }
 
-    // Handle header shrink on scroll
     window.addEventListener('scroll', () => {
       if (!previewMode) {
         if (window.scrollY > 100) {
@@ -1129,7 +1137,7 @@
       pagination.innerHTML = '';
 
       const prevBtn = document.createElement('button');
-      prevBtn.textContent = 'Previous';
+      prevBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"></path></svg>';
       prevBtn.disabled = page === 1;
       prevBtn.onclick = () => {
         if (currentPage > 1) {
@@ -1176,7 +1184,7 @@
       }
 
       const nextBtn = document.createElement('button');
-      nextBtn.textContent = 'Next';
+      nextBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"></path></svg>';
       nextBtn.disabled = page === totalPages;
       nextBtn.onclick = () => {
         if (currentPage < totalPages) {
@@ -1220,7 +1228,6 @@
       setTimeout(() => {
         document.body.classList.remove('preview-transition');
         document.body.classList.add('preview-complete');
-        // Re-check scroll position after resetting preview mode
         if (window.scrollY > 100) {
           header.classList.add('scrolled');
         } else {
@@ -1337,10 +1344,10 @@
         }
       };
 
+      details.appendChild(image);
       details.appendChild(linkRow);
       details.appendChild(bgPrev);
 
-      card.appendChild(image);
       card.appendChild(details);
 
       return card;
@@ -1434,7 +1441,6 @@
       filteredImages = imgs;
       totalPages = Math.ceil(filteredImages.length / IMAGES_PER_PAGE);
       renderGalleryPage(currentPage);
-      // Initial scroll check
       if (window.scrollY > 100) {
         header.classList.add('scrolled');
       }
