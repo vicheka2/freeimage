@@ -130,11 +130,11 @@
       0% { filter: drop-shadow(0 0 10px #0d93a888); }
       100% { filter: drop-shadow(0 0 24px #4b5cfa77); }
     }
-    .header-title, .header-subtitle, .search-container {
+    .header-title, .header-subtitle {
       transition: opacity 0.3s ease-in-out, font-size 0.3s ease-in-out, height 0.3s ease-in-out, margin 0.3s ease-in-out;
     }
-    header.preview-mode .header-title, header.preview-mode .header-subtitle, header.preview-mode .search-container,
-    header.scrolled .header-title, header.scrolled .header-subtitle, header.scrolled .search-container {
+    header.preview-mode .header-title, header.preview-mode .header-subtitle,
+    header.scrolled .header-title, header.scrolled .header-subtitle {
       opacity: 0;
       height: 0;
       margin: 0;
@@ -178,10 +178,14 @@
       box-shadow: 0 2px 12px rgba(99,102,241,0.1);
       padding: 0.3rem;
       transition: box-shadow 0.2s, transform 0.2s;
+      display: none; /* Hidden by default */
     }
     body.dark-mode .search-container {
       background: var(--card-bg-dark);
       box-shadow: 0 2px 12px rgba(0,0,0,0.3);
+    }
+    .search-container.active {
+      display: flex; /* Shown when active */
     }
     .search-container:hover {
       box-shadow: 0 4px 16px rgba(99,102,241,0.15);
@@ -254,6 +258,57 @@
     }
     .clear-search.active {
       display: block;
+    }
+    .search-toggle {
+      position: absolute;
+      top: 1rem;
+      left: 4rem;
+      background: #ffffff;
+      border: 1.5px solid var(--primary);
+      border-radius: 0.4rem;
+      padding: 0.3rem;
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: background 0.2s, border-color 0.2s, top 0.3s ease-in-out, left 0.3s ease-in-out, opacity 0.3s ease-in-out;
+      z-index: 1001;
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 1; /* Always visible */
+    }
+    header.preview-mode .search-toggle {
+      opacity: 0; /* Hidden in preview mode */
+      pointer-events: none; /* Prevent interaction */
+    }
+    .search-toggle:hover {
+      background: var(--primary);
+      border-color: var(--primary);
+    }
+    body.dark-mode .search-toggle {
+      background: var(--copy-btn-bg-dark);
+      border-color: #e2e8f0;
+    }
+    body.dark-mode .search-toggle:hover {
+      background: #e2e8f0;
+      border-color: #e2e8f0;
+    }
+    .search-toggle svg {
+      width: 20px;
+      height: 20px;
+      fill: var(--primary);
+      transition: fill 0.2s;
+    }
+    body.dark-mode .search-toggle svg {
+      fill: #e2e8f0;
+    }
+    .search-toggle:hover svg {
+      fill: #ffffff;
+    }
+    header.preview-mode .search-toggle {
+      top: 0.6rem;
+      left: 3.5rem;
     }
     .dark-mode-toggle {
       position: absolute;
@@ -949,6 +1004,12 @@
 </head>
 <body>
   <header>
+    <button class="search-toggle" id="searchToggle">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="11" cy="11" r="8"></circle>
+        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+      </svg>
+    </button>
     <button class="back-button" id="backButton">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
         <path d="M15 18l-6-6 6-6"></path>
@@ -968,7 +1029,7 @@
     <div class="header-logo">NY VICHEKA</div>
     <h1 class="header-title">Free Background Images Gallery</h1>
     <div class="header-subtitle">All images are free for your website and creative projects.</div>
-    <div class="search-container">
+    <div class="search-container" id="searchContainer">
       <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
         <circle cx="11" cy="11" r="8"></circle>
         <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
@@ -1010,6 +1071,8 @@
     const darkOverlay = document.getElementById('darkOverlay');
     const searchInput = document.getElementById('searchInput');
     const clearSearch = document.getElementById('clearSearch');
+    const searchToggle = document.getElementById('searchToggle');
+    const searchContainer = document.getElementById('searchContainer');
     const header = document.querySelector('header');
 
     function toggleDarkMode() {
@@ -1029,6 +1092,13 @@
       resetPreviewMode();
       renderGalleryPage(currentPage);
       showSimpleMessage("Background reset!", true);
+    });
+
+    searchToggle.addEventListener('click', () => {
+      searchContainer.classList.toggle('active');
+      if (searchContainer.classList.contains('active')) {
+        searchInput.focus();
+      }
     });
 
     searchInput.addEventListener('input', (e) => {
