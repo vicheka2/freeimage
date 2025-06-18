@@ -1,0 +1,9 @@
+{
+  "images": [
+    "mountain.jpg",
+    "sea.png",
+    "forest.jpeg",
+    "cityscape.gif",
+    // List all your image filenames here
+  ]
+}
