@@ -4,7 +4,6 @@
   <meta charset="UTF-8">
   <title>NY VICHEKA | Free Background Images Gallery</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <!-- Add SweetAlert2 CDN -->
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <style>
     :root {
@@ -29,7 +28,6 @@
       --copy-btn-shadow: 0 2px 8px #22c55e44;
       --bgmsg: #22c55e;
       --bgmsg-text: #fff;
-      /* Dark mode variables */
       --bg-dark: #1f252e;
       --card-bg-dark: #2d3748;
       --text-dark: #e2e8f0;
@@ -426,7 +424,7 @@
       outline: none;
       padding: 0.2em 0;
       margin: 0;
-      user-select: all;
+      user-select: text;
       border-radius: 0.4em;
       transition: background 0.13s;
       text-overflow: ellipsis;
@@ -508,8 +506,8 @@
       animation: fadeOutMsg 1.7s forwards;
     }
     @keyframes fadeOutMsg {
-      0% { opacity: 0.96;}
-      70% { opacity: 0.96;}
+      0% { opacity: 0.96; }
+      70% { opacity: 0.96; }
       100% { opacity: 0; }
     }
     .bg-preview {
@@ -547,16 +545,11 @@
     body.dark-mode .bg-preview:hover {
       background-color: #374151;
     }
-    .card-details .img-desc {display: none;}
+    .card-details .img-desc { display: none; }
     .coming-soon {
       height: 190px;
       width: 100%;
-      background: repeating-linear-gradient(
-        135deg,
-        #e0e7ff 0px,
-        #f0fdfa 70px,
-        #e0e7ff 140px
-      );
+      background: repeating-linear-gradient(135deg, #e0e7ff 0px, #f0fdfa 70px, #e0e7ff 140px);
       color: var(--primary);
       display: flex;
       align-items: center;
@@ -567,12 +560,7 @@
       letter-spacing: .06em;
     }
     body.dark-mode .coming-soon {
-      background: repeating-linear-gradient(
-        135deg,
-        #2d3748 0px,
-        #4b5563 70px,
-        #2d3748 140px
-      );
+      background: repeating-linear-gradient(135deg, #2d3748 0px, #4b5563 70px, #2d3748 140px);
       color: var(--primary);
     }
     .pagination {
@@ -630,18 +618,18 @@
       color: #fff;
     }
     body.dark-mode .pagination .page-btn.current,
-    body.dark-mode .pagination .page-btn:hover {
+    body.dark-mode .page-btn:hover {
       background: #4b5cfa;
       color: #e2e8f0;
     }
     @media (max-width: 1200px) {
-      .gallery { grid-template-columns: repeat(3, 1fr);}
+      .gallery { grid-template-columns: repeat(3, 1fr); }
     }
     @media (max-width: 900px) {
-      .gallery { grid-template-columns: repeat(2, 1fr);}
+      .gallery { grid-template-columns: repeat(2, 1fr); }
     }
     @media (max-width: 600px) {
-      .gallery { grid-template-columns: 1fr;}
+      .gallery { grid-template-columns: 1fr; }
     }
     @media (max-width: 800px) {
       .gallery { gap: 1.1rem; padding: 1.3rem 0.7rem 2.1rem 0.7rem; }
@@ -674,7 +662,6 @@
     .card.hidden {
       display: none;
     }
-    /* Custom SweetAlert2 styling for smaller size */
     .swal2-custom {
       font-size: 0.9rem !important;
       padding: 0.5rem 1rem !important;
@@ -763,21 +750,11 @@
   </footer>
   <script>
     const baseRepoURL = "https://vicheka2.github.io/freeimage";
-    const IMAGES_TOTAL = 1000;
-    const IMAGES_PER_PAGE = 20;
-
-    const images = [];
-    for (let i = 1; i <= IMAGES_TOTAL; i++) {
-      images.push({
-        url: `${baseRepoURL}/images/img${i}.png`, // Try .png first
-        fallbackUrl: `${baseRepoURL}/images/img${i}.jpg`, // Fallback to .jpg if .png fails
-        filename: `img${i}.png`,
-        idx: i
-      });
-    }
-
+    const IMAGES_PER_PAGE = 16; // Still 15 per page for found images, but not forced
+    const TOTAL_COMING_SOON = 5; // Only 5 "Coming Soon" placeholders total
+    let images = [];
     let currentPage = 1;
-    const totalPages = Math.ceil(images.length / IMAGES_PER_PAGE);
+    let totalPages = 1;
     let previewMode = false;
     let currentPreviewCard = null;
     let darkOverlayActive = false;
@@ -805,12 +782,46 @@
       document.body.classList.add('dark-mode');
     }
 
+    // Fetch all image files dynamically from the GitHub repo
+    async function fetchImageList() {
+      try {
+        const apiUrl = 'https://api.github.com/repos/vicheka2/freeimage/contents/images';
+        let result = [];
+        let res = await fetch(apiUrl);
+        if (!res.ok) throw new Error("Failed to fetch image list.");
+        let files = await res.json();
+        result = files
+          .filter(f => f.type === 'file' && /\.(png|jpg|jpeg|gif|webp)$/i.test(f.name))
+          .map((f, i) => ({
+            url: `${baseRepoURL}/images/${f.name}`,
+            fallbackUrl: `${baseRepoURL}/images/${f.name.replace(/\.(png|jpg|jpeg|gif|webp)$/i, '.jpg')}`,
+            filename: f.name,
+            idx: i + 1
+          }));
+        return result;
+      } catch (e) {
+        console.error("Error fetching image list:", e);
+        let fallback = [];
+        for (let i = 1; i <= 1000; i++) {
+          fallback.push({
+            url: `${baseRepoURL}/images/img${i}.png`,
+            fallbackUrl: `${baseRepoURL}/images/img${i}.jpg`,
+            filename: `img${i}.png`,
+            idx: i
+          });
+        }
+        return fallback;
+      }
+    }
+
+    // Main render logic with 5 "Coming Soon" placeholders at the end
     function renderGalleryPage(page) {
       const gallery = document.getElementById('gallery');
       gallery.innerHTML = '';
       const startIdx = (page - 1) * IMAGES_PER_PAGE;
       const endIdx = Math.min(startIdx + IMAGES_PER_PAGE, images.length);
 
+      // Render real images
       for (let i = startIdx; i < endIdx; i++) {
         const card = createCard(images[i], i);
         if (previewMode && card !== currentPreviewCard) {
@@ -818,6 +829,19 @@
         }
         gallery.appendChild(card);
       }
+
+      // Add "Coming Soon" placeholders only at the end, total of 5
+      if (page === totalPages && images.length < (totalPages * IMAGES_PER_PAGE) && images.length + 5 > images.length) {
+        const remaining = Math.min(5, (totalPages * IMAGES_PER_PAGE) - images.length); // Limit to 5 total
+        for (let i = 0; i < remaining; i++) {
+          const card = createComingSoonCard(images.length + i);
+          if (previewMode && card !== currentPreviewCard) {
+            card.classList.add('hidden');
+          }
+          gallery.appendChild(card);
+        }
+      }
+
       renderPagination(page);
       observeCards();
     }
@@ -844,11 +868,11 @@
         for (let i = 1; i <= totalPages; ++i) pagesToShow.push(i);
       } else {
         if (page <= 4) {
-          pagesToShow = [1,2,3,4,5,'...',totalPages];
+          pagesToShow = [1, 2, 3, 4, 5, '...', totalPages];
         } else if (page >= totalPages - 3) {
-          pagesToShow = [1,'...',totalPages-4,totalPages-3,totalPages-2,totalPages-1,totalPages];
+          pagesToShow = [1, '...', totalPages-4, totalPages-3, totalPages-2, totalPages-1, totalPages];
         } else {
-          pagesToShow = [1,'...',page-1,page,page+1,'...',totalPages];
+          pagesToShow = [1, '...', page-1, page, page+1, '...', totalPages];
         }
       }
       for (let p of pagesToShow) {
@@ -898,9 +922,7 @@
         timerProgressBar: true,
         background: '#22c55e',
         color: '#fff',
-        customClass: {
-          popup: 'swal2-custom'
-        }
+        customClass: { popup: 'swal2-custom' }
       });
     }
 
@@ -929,13 +951,13 @@
       card.className = 'card';
 
       const image = document.createElement('img');
-      image.src = img.url; // Start with .png
-      image.alt = `Image ${img.idx}`;
+      image.src = img.url;
+      image.alt = `Image ${img.filename}`;
       let imageLoaded = false;
 
       image.onerror = function() {
-        if (!imageLoaded) {
-          image.src = img.fallbackUrl; // Try .jpg if .png fails
+        if (!imageLoaded && img.fallbackUrl !== img.url) {
+          image.src = img.fallbackUrl;
           image.onerror = function() {
             card.innerHTML = '';
             const comingSoonDiv = document.createElement('div');
@@ -948,8 +970,8 @@
           };
           image.onload = function() {
             imageLoaded = true;
-            img.url = img.fallbackUrl; // Update URL to .jpg for consistency in links
-            img.filename = `img${img.idx}.jpg`;
+            img.url = img.fallbackUrl;
+            img.filename = img.fallbackUrl.split('/').pop();
           };
         }
       };
@@ -1041,6 +1063,22 @@
       return card;
     }
 
+    function createComingSoonCard(idx) {
+      const card = document.createElement('div');
+      card.className = 'card';
+
+      const comingSoonDiv = document.createElement('div');
+      comingSoonDiv.className = 'coming-soon';
+      comingSoonDiv.innerText = "Coming Soon";
+      card.appendChild(comingSoonDiv);
+
+      const details = document.createElement('div');
+      details.className = 'card-details';
+      card.appendChild(details);
+
+      return card;
+    }
+
     function copyText(text, btn, inputElem, linkRow) {
       if (navigator.clipboard && window.isSecureContext) {
         navigator.clipboard.writeText(text).then(() => {
@@ -1070,9 +1108,7 @@
             timerProgressBar: true,
             background: '#ef4444',
             color: '#fff',
-            customClass: {
-              popup: 'swal2-custom'
-            }
+            customClass: { popup: 'swal2-custom' }
           });
         }
       } catch (err) {
@@ -1086,9 +1122,7 @@
           timerProgressBar: true,
           background: '#ef4444',
           color: '#fff',
-          customClass: {
-            popup: 'swal2-custom'
-          }
+          customClass: { popup: 'swal2-custom' }
         });
       }
     }
@@ -1103,7 +1137,7 @@
           document.body.appendChild(link);
           link.click();
           document.body.removeChild(link);
-          URL.revokeObjectURL(link.href); // Clean up
+          URL.revokeObjectURL(link.href);
           showSimpleMessage("Download started!", true);
         })
         .catch(() => {
@@ -1117,14 +1151,11 @@
             timerProgressBar: true,
             background: '#ef4444',
             color: '#fff',
-            customClass: {
-              popup: 'swal2-custom'
-            }
+            customClass: { popup: 'swal2-custom' }
           });
         });
     }
 
-    // Intersection Observer for scroll animations with stagger
     function observeCards() {
       const cards = document.querySelectorAll('.card');
       const observer = new IntersectionObserver((entries) => {
@@ -1148,7 +1179,12 @@
       });
     }
 
-    renderGalleryPage(currentPage);
+    // On page load, fetch images from GitHub repo and render
+    fetchImageList().then(imgs => {
+      images = imgs;
+      totalPages = Math.ceil(images.length / IMAGES_PER_PAGE); // Only based on images, not placeholders
+      renderGalleryPage(currentPage);
+    });
   </script>
 </body>
 </html>
